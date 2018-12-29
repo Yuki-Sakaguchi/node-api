@@ -9,18 +9,58 @@ function renderTodoList (todoList) {
   for (let item of todoList) {
     const li = document.createElement('li')
     const label = document.createElement('label')
+    
     const checkbox = document.createElement('input')
     checkbox.type = 'checkbox'
     checkbox.checked = item.done
+    checkbox.dataset.id = item.id
+    checkbox.addEventListener('change', checkboxListener)
+
     const text = new Text(item.title)
+
+    const deleteButton = document.createElement('button')
+    deleteButton.innerText = 'Delete'
+    deleteButton.classList.add('delete-button')
+    deleteButton.dataset.id = item.id
+    deleteButton.addEventListener('click', deleteButtonListener)
 
     label.appendChild(checkbox)
     label.appendChild(text)
+    label.appendChild(deleteButton)
 
     li.appendChild(label)
 
     todoContainer.appendChild(li)
   }
+}
+
+/**
+ * APIでTODOリストのタスクを削除
+ * @param {*} event 
+ */
+function deleteButtonListener (event) {
+  const button = event.currentTarget
+  const id = button.dataset.id
+
+  fetch(`./api/v1/item/${id}`, { method: 'DELETE' })
+    .then(() => fetchTodoList())
+}
+
+/**
+ * APIでTODOリストを更新
+ * @param {*} event 
+ */
+function checkboxListener (event) {
+  const checkbox = event.currentTarget
+  const id = checkbox.dataset.id
+
+  const body = new FormData()
+  body.append('done', checkbox.checked.toString())
+
+  fetch(`./api/v1/item/${id}`, {
+    method: 'PUT',
+    body
+  }).then(() => fetchTodoList())
 }
 
 /**

@@ -47,12 +47,25 @@ app.post(`${apiUrl}add`, (req, res) => {
  * TODOLISTからタスクを削除
  */
 app.delete(`${apiUrl}item/:id`, (req, res) => {
-  // TODO
+  const index = todoList.findIndex(item => item.id === req.params.id)
+  if (index >= 0) {
+    const deleted = todoList.splice(index, 1)
+    console.log(`Delete: ${JSON.stringify(deleted[0])}`)
+  }
+  res.sendStatus(200)
 })
 
 /**
  * TODOLISTのタスクを更新
  */
 app.put(`${apiUrl}item/:id`, (req, res) => {
-  // TODO
+  const index = todoList.findIndex(item => item.id === req.params.id)
+  if (index >= 0) {
+    const item = todoList[index]
+    if (req.body.done) {
+      item.done = req.body.done === 'true'
+    }
+    console.log(`Edit: ${JSON.stringify(item)}`)
+  }
+  res.sendStatus(200)
 })
